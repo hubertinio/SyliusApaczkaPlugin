@@ -1,7 +1,7 @@
 {
-    "name": "hubertinio/sylius-example-plugin",
+    "name": "hubertinio/sylius-apaczka-plugin",
     "type": "sylius-plugin",
-    "description": "Hubertinio example plugin for Sylius.",
+    "description": "Sylius apaczka.pl shipping integration",
     "keywords": [
         "sylius",
         "sylius-plugin"
@@ -64,8 +64,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Hubertinio\\SyliusExamplePlugin\\": "src/",
-            "Tests\\Hubertinio\\SyliusExamplePlugin\\": "tests/"
+            "Hubertinio\\SyliusApaczkaPlugin\\": "src/",
+            "Tests\\Hubertinio\\SyliusApaczkaPlugin\\": "tests/"
         }
     },
     "autoload-dev": {

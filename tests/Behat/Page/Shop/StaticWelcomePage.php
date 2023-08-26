@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Hubertinio\SyliusExamplePlugin\Behat\Page\Shop;
+namespace Tests\Hubertinio\SyliusApaczkaPlugin\Behat\Page\Shop;
 
 use FriendsOfBehat\PageObjectExtension\Page\SymfonyPage;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Hubertinio\SyliusExamplePlugin\Controller;
+namespace Hubertinio\SyliusApaczkaPlugin\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
