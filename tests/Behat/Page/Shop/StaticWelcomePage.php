@@ -21,7 +21,7 @@ class StaticWelcomePage extends SymfonyPage implements WelcomePageInterface
      */
     public function getRouteName(): string
     {
-        return 'hubertinio_sylius_example_static_welcome';
+        return 'hubertinio_sylius_apaczka_static_welcome';
     }
 
     /**

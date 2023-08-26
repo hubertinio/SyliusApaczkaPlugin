@@ -14,7 +14,7 @@ final class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('hubertinio_sylius_example_plugin');
+        $treeBuilder = new TreeBuilder('hubertinio_sylius_apaczka_plugin');
         $rootNode = $treeBuilder->getRootNode();
 
         return $treeBuilder;

@@ -7,7 +7,7 @@ namespace Hubertinio\SyliusApaczkaPlugin;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-final class HubertinioSyliusExamplePlugin extends Bundle
+final class HubertinioSyliusApaczkaPlugin extends Bundle
 {
     use SyliusPluginTrait;
 
