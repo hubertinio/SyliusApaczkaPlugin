@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Hubertinio\SyliusApaczkaPlugin\Api;
 
+use Webmozart\Assert\Assert;
+
 /**
  * @see https://www.apaczka.pl/integracje/
  */
@@ -13,13 +15,19 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
     private const SIGN_ALGORITHM = 'sha256';
     private const EXPIRES = '+30min';
 
+    public const POINTS_TYPES = [
+        "INPOST",
+        "UPS",
+        "POCZTA",
+    ];
+
     private  static string $appId;
     private static string $appSecret;
 
     public function __construct(string $appId, string $appSecret)
     {
-                                                self::$appId = $appId;
-                                                self::$appSecret = $appSecret;
+        self::$appId = $appId;
+        self::$appSecret = $appSecret;
     }
 
     public static function setAppId(string $appId): void
@@ -108,6 +116,9 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
     }
 
     public static function points (string$type) {
+        $type = mb_strtoupper(trim($type));
+        Assert::oneOf($type, self::POINTS_TYPES);
+
         return self::request( __FUNCTION__ . '/' . $type . '/');
     }
 

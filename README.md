@@ -10,3 +10,9 @@
    <a href="https://www.apaczka.pl/">apaczka.pl</a>
 </p>
 
+### Commands
+
+```
+bin/console sylius:shipping:apaczka:dev | jq '.response.services[] | .name,.service_id'
+```
+

@@ -33,6 +33,18 @@
             <tag name="console.command"/>
         </service>
 
+        <service id="hubertinio.apaczka.cli.load_points"
+                 class="Hubertinio\SyliusApaczkaPlugin\Cli\LoadPointsCommand">
+            <argument type="service" id="hubertinio.apaczka.api.cached_client" />
+            <tag name="console.command"/>
+        </service>
+
+        <service id="hubertinio.apaczka.cli.load_services"
+                 class="Hubertinio\SyliusApaczkaPlugin\Cli\LoadServicesCommand">
+            <argument type="service" id="hubertinio.apaczka.api.cached_client" />
+            <tag name="console.command"/>
+        </service>
+
         <!-- @TODO shipping charges calculator -->
         <!-- @TODO \Sylius\Bundle\ShippingBundle\DependencyInjection\Compiler\RegisterShippingMethodsResolversPass -->
         <service id="hubertinio.apaczka.address_shipping_calculator"
