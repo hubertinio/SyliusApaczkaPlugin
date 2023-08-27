@@ -13,6 +13,8 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class CachedApaczkaApiClient implements ApaczkaApiClientInterface
 {
+    private const CACHE_TTL = 86400;
+
         private const OMMIT_METHODS = [
         'getSignature',
                             'stringToSign'
@@ -39,7 +41,7 @@ class CachedApaczkaApiClient implements ApaczkaApiClientInterface
             $cacheKey = md5($name . json_encode($arguments));
 
         return self::$cache->get($cacheKey, function (ItemInterface$item) use ($name, $arguments) {
-            $item->expiresAfter(3600);
+            $item->expiresAfter(self::CACHE_TTL);
 
             $output = call_user_func_array([self::$client, $name], $arguments);
 
