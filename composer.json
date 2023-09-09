@@ -1,7 +1,7 @@
 {
     "name": "hubertinio/sylius-apaczka-plugin",
     "type": "sylius-plugin",
-    "version": "1.12",
+    "version": "1.12.1",
     "description": "Sylius apaczka.pl shipping integration",
     "keywords": [
         "sylius",
