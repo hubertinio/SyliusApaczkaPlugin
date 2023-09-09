@@ -40,7 +40,8 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
         self::$appSecret = $appSecret;
     }
 
-    public static function request( $route, $data = null) {
+    public static function request( $route, $data = null)
+    {
         $ch = curl_init();
         curl_setopt( $ch, CURLOPT_URL, self::API_URL . $route );
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -51,7 +52,8 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
 
         $result = curl_exec( $ch );
 
-        if ( $result === false ) {
+        if ( $result === false )
+        {
             curl_close( $ch );
             return false;
         }
@@ -61,7 +63,8 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
         return $result;
     }
 
-    public static function buildRequest( $route, $data = [] ) {
+    public static function buildRequest( $route, $data = [] )
+    {
         $data = json_encode($data);
         $expires = strtotime( self::EXPIRES );
 
@@ -73,72 +76,95 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
         ];
     }
 
-    public static function order( $id ) {
+    /**
+     * Fetch order details
+     */
+    public static function order($id)
+    {
         return self::request( __FUNCTION__ . '/' . $id . '/' );
     }
 
-    public static function orders ($page = 1, $limit = 10) {
+    public static function orders($page = 1, $limit = 10)
+    {
         return self::request( __FUNCTION__ . '/', [
             'page' => $page,
             'limit' => $limit
         ]);
     }
 
-    public static function waybill( $id ) {
+    /**
+     * Fetch waybill print
+     */
+    public static function waybill($id)
+    {
         return self::request( __FUNCTION__ . '/' . $id . '/' );
     }
 
-    public static function pickup_hours ($postal_code, $service_id = false) {
+    public static function pickup_hours($postal_code, $service_id = false)
+    {
         return self::request( __FUNCTION__ . '/', [
             'postal_code' => $postal_code,
             'service_id' => $service_id
         ]);
     }
 
-    public static function order_valuation ($order) {
+    public static function order_valuation(array $order)
+    {
+        $order = json_encode($order);
+
         return self::request( __FUNCTION__ . '/', [
             'order' => $order
         ]);
     }
 
-    public static function order_send ($order) {
+    public static function order_send(array $order)
+    {
+        $order = json_encode($order);
+
         return self::request( __FUNCTION__ . '/', [
             'order' => $order
         ]);
     }
 
-    public static function cancel_order( string $id ) {
+    public static function cancel_order(string $id )
+    {
         return self::request( __FUNCTION__ . '/' . $id . '/' );
     }
 
-    public static function service_structure () {
+    public static function service_structure()
+    {
         return self::request( __FUNCTION__ . '/');
     }
 
-    public static function points (string$type) {
+    public static function points(string $type)
+    {
         $type = mb_strtoupper(trim($type));
         Assert::oneOf($type, self::POINTS_TYPES);
 
         return self::request( __FUNCTION__ . '/' . $type . '/');
     }
 
-    public static function customer_register (string $customer) {
+    public static function customer_register(string $customer)
+    {
         return self::request( __FUNCTION__ . '/', [
             'customer' => $customer
         ]);
     }
 
-    public static function turn_in( array $order_ids = [] ) {
+    public static function turn_in(array $order_ids = [])
+    {
         return self::request( __FUNCTION__ . '/', [
             'order_ids' => $order_ids
         ]);
     }
 
-    public static function getSignature( string $string, string $key ) {
+    public static function getSignature( string $string, string $key )
+    {
         return hash_hmac( self::SIGN_ALGORITHM, $string, $key );
     }
 
-    public static function stringToSign( string $appId, string $route, string $data,  int $expires ) {
+    public static function stringToSign( string $appId, string $route, string $data,  int $expires )
+    {
         return sprintf( "%s:%s:%s:%s", $appId, $route, $data, $expires );
     }
 }

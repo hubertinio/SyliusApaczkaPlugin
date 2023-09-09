@@ -33,7 +33,7 @@ final class LoadServicesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $data = $this->apiClient::service_structure ();
+        $data = $this->apiClient::service_structure();
         $data = json_decode($data, true);
 
         $table = new Table($output);
