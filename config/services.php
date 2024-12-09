@@ -17,13 +17,19 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
-    $servicesIdPrefix  = 'hubertinio.apaczka.';
+    $servicesIdPrefix  = 'hubertinio_sylius_apaczka_plugin.';
+
     $services = $containerConfigurator->services();
 
     $services->defaults()
         ->autowire()
         ->autoconfigure();
 
+    $services->load('Hubertinio\\SyliusApaczkaPlugin\\Controller\\', __DIR__ . '/../src/Controller');
+
+    /**
+     * @TODO dane z konfiguracji
+     */
     $services->set($servicesIdPrefix . 'api.client', ApaczkaApiClient::class)
         ->arg('$appId', '1352150_2c039ebd279355ec_63VFbdW')
         ->arg('$appSecret', '5kbtajsttpzukslktbogasggjbqwi1c1');

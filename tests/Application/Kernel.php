@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Hubertinio\SyliusApaczkaPlugin\Application;
+namespace Tests\Hubertinio\SyliusExamplePlugin\Application;
 
 use PSS\SymfonyMockerContainer\DependencyInjection\MockerContainer;
 use Sylius\Bundle\CoreBundle\Application\Kernel as SyliusKernel;

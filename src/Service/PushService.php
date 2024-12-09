@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hubertinio\SyliusApaczkaPlugin\Service;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 final class PushService
 {
@@ -13,7 +14,7 @@ final class PushService
     private LoggerInterface $logger;
 
     public function __construct(
-        SecurityService $securityService,
+        #[Autowire(service: 'hubertinio_sylius_apaczka_plugin.service.security')] SecurityService $securityService,
         LoggerInterface $logger
     ) {
         $this->securityService = $securityService;

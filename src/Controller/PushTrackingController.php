@@ -4,21 +4,26 @@ declare(strict_types=1);
 
 namespace Hubertinio\SyliusApaczkaPlugin\Controller;
 
+use ECSPrefix202306\Symfony\Component\HttpKernel\Attribute\AsController;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Hubertinio\SyliusApaczkaPlugin\Service\PushService;
 
+#[AsController]
 final class PushTrackingController extends AbstractController
 {
     private PushService $pushService;
 
     private LoggerInterface $logger;
 
-    public function __construct(PushService $pushService, LoggerInterface $logger)
-    {
+    public function __construct(
+        #[Autowire(service: 'hubertinio_sylius_apaczka_plugin.service.push')] PushService $pushService,
+        LoggerInterface $logger
+    ) {
         $this->pushService = $pushService;
         $this->logger = $logger;
     }
