@@ -31,8 +31,8 @@ return static function (ContainerConfigurator $containerConfigurator): void {
      * @TODO dane z konfiguracji
      */
     $services->set($servicesIdPrefix . 'api.client', ApaczkaApiClient::class)
-        ->arg('$appId', '1352150_2c039ebd279355ec_63VFbdW')
-        ->arg('$appSecret', '5kbtajsttpzukslktbogasggjbqwi1c1');
+        ->arg('$appId', '@todo factory')
+        ->arg('$appSecret', '@todo factory');
 
     $services->set($servicesIdPrefix . 'api.cached_client', CachedApaczkaApiClient::class)
         ->args([
