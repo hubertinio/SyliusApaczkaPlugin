@@ -1,0 +1,9 @@
+hubertinio_sylius_apaczka_shop:
+    resource: "@HubertinioSyliusApaczkaPlugin/config/shop_routing.php"
+    prefix: /{_locale}
+    requirements:
+        _locale: ^[a-z]{2}(?:_[A-Z]{2})?$
+
+hubertinio_sylius_apaczka_admin:
+    resource: "@HubertinioSyliusApaczkaPlugin/config/admin_routing.php"
+    prefix: /admin

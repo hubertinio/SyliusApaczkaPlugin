@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Hubertinio\SyliusApaczkaPlugin
+        psr4_prefix: Hubertinio\SyliusApaczkaPlugin

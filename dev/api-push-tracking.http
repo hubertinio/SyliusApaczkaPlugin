@@ -1,0 +1,26 @@
+POST {{ localhost }}/asdfasfdsf
+
+{
+  "signature": "1234567891234567891234567891234567891234567891234567891234567891",
+  "response": {
+    "orderNumber": "123456789",
+    "statuses": [
+      {
+        "updatedAt": "2022-10-06T00:45:00",
+        "status": "ON_THE_WAY",
+        "trackingOperatorStatuses": [
+          {
+            "updatedAt": "2022-10-06T00:45:00",
+            "status": "IT",
+            "description": "In transit",
+            "place": "Warszawa"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+###
+
+
