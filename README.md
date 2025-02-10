@@ -20,20 +20,20 @@
 Add this line to config/packages/_sylius.yml
 
 ```
-- { resource: "@HubertinioSyliusApaczkaPlugin/config/config.yml" }
+- { resource: "@HubertinioSyliusApaczkaPlugin/Resources/config/config.yml" }
 ```
 
 Add this line to config/routes/hubertinio_sylius_apaczka.yaml
 
 ```
 hubertinio_sylius_apaczka_shop:
-    resource: "@HubertinioSyliusApaczkaPlugin/config/shop_routing.php"
+    resource: "@HubertinioSyliusApaczkaPlugin/Resources/config/shop_routing.php"
     prefix: /{_locale}
     requirements:
         _locale: ^[a-z]{2}(?:_[A-Z]{2})?$
 
 hubertinio_sylius_apaczka_admin:
-    resource: "@HubertinioSyliusApaczkaPlugin/config/admin_routing.php"
+    resource: "@HubertinioSyliusApaczkaPlugin/Resources/config/admin_routing.php"
     prefix: /admin
 
 ```

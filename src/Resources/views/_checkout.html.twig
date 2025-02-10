@@ -1,0 +1,101 @@
+{#{{ dump(app.request.locale) }}#}
+
+<link rel="stylesheet" href="//widget.bliskapaczka.pl/prod/main.css" />
+<script src="//widget.bliskapaczka.pl/prod/main.js"></script>
+<script type="text/javascript">
+    const currentLocale = "{{ app.request.locale }}".substring(0,2);
+    const initialAddress = "{{ order.shippingAddress.postCode }}"
+    const operatorsArray = ['RUCH', 'INPOST', 'INPOST_INTERNATIONAL', 'POCZTA', 'DPD', 'UPS', 'DHL', 'GLS', 'FEDEX', 'SAMEDAY', 'CARGUS', 'FAN_COURIER', 'ALLEGRO'];
+    const brandsArray = ['RUCH', 'INPOST', 'INPOST_INTERNATIONAL', 'ZABKA', 'POCZTA_POLSKA', 'ORLEN', 'ORLEN_PACZKA', 'DPD', 'UPS', 'KOLPORTER', 'DHL', 'GLS'];
+
+    window.addEventListener('load', function () {
+        const form = document.querySelector('form[name="sylius_checkout_select_shipping"]');
+        const inputs = form.querySelectorAll('input[type="radio"]');
+        const targetInput = form.querySelector('input[value="apaczka"]');
+
+        if (targetInput) {
+            const wrapper = document.createElement('div');
+            wrapper.id = 'bp-wrapper';
+            wrapper.style.display = 'none';
+
+            const title = document.createElement('h2');
+            title.style.marginTop = '1em';
+            title.style.marginBottom = '1em';
+            title.textContent = '{{ 'hubertinio_sylius_apaczka_plugin.ui.select_pickup_point'|trans }}';
+
+            const div = document.createElement('div');
+            div.id = 'bp';
+            div.style.minWidth = '300px';
+            div.style.minHeight = '700px';
+            div.style.height = '700px';
+            div.style.width = '100%';
+            div.style.marginTop = '1em';
+
+            // Składamy strukturę
+            wrapper.appendChild(title);
+            wrapper.appendChild(div);
+            form.after(wrapper); // Wstawiamy wrapper PO formularzu
+
+            function toggleDiv() {
+                if (targetInput.checked) {
+                    if (div.getAttribute('data-loaded') !== 'true') {
+                        const mapWidget = reloadMap(div.id, currentLocale);
+                        div.setAttribute('data-loaded', 'true');
+                    }
+
+                    wrapper.style.display = 'block';
+                    wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    wrapper.style.display = 'none';
+                }
+            }
+
+            toggleDiv();
+
+            inputs.forEach(input => input.addEventListener('change', toggleDiv));
+        }
+    });
+
+    function reloadMap(id, language) {
+        return BPWidget.init(
+            document.getElementById(id),
+            {
+                language: language,
+                callback: function(pos) {
+                    const url = "{{ path('hubertinio_sylius_apaczka_checkout_select_point') }}";
+
+                    const data = {
+                        'pos': pos,
+                        'orderId': "{{ order.id }}"
+                    };
+
+                    fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        return response.json();
+                    })
+                    .then(result => {
+                        console.log('Success:', result);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                },
+                initialAddress: initialAddress,
+                betaRendering: true,
+                mapOnly: false,
+                codeSearch: true,
+                operatorMarkers: true
+            }
+        );
+    }
+</script>

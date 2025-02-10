@@ -11,8 +11,8 @@ final class HubertinioSyliusApaczkaPlugin extends Bundle
 {
     use SyliusPluginTrait;
 
-    public function getPath(): string
+    public function boot(): void
     {
-        return \dirname(__DIR__);
+        $this->path = \dirname(__FILE__);
     }
 }

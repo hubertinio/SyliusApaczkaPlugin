@@ -20,7 +20,7 @@ final class LoadServicesCommand extends Command
 {
     protected   static $defaultName = 'sylius:shipping:apaczka:load-services';
 
-            protected static $defaultDescription = 'Load supported services';
+    protected static $defaultDescription = 'Load supported services';
 
     private ApaczkaApiClientInterface $apiClient;
 

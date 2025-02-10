@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apt-get update; \
     apt-get install -y \
-      php8.0-xdebug \
+      php8.1-xdebug \
       curl \
       git \
       nano; \
@@ -21,10 +21,5 @@ RUN apt-get remove -y nodejs; \
 
 RUN wget https://get.symfony.com/cli/installer -O - | bash; \
     mv /root/.symfony5/bin/symfony /usr/local/bin/symfony
-
-#COPY .ssh/ /root/.ssh/
-#RUN chown -R root:root /root/.ssh; \
-#    chmod 0700 /root/.ssh; \
-#    chmod 0600 /root/.ssh/id_rsa
 
 USER root

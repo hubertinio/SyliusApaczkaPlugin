@@ -5,15 +5,19 @@ declare(strict_types=1);
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClient;
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClientInterface;
 use Hubertinio\SyliusApaczkaPlugin\Api\CachedApaczkaApiClient;
+use Hubertinio\SyliusApaczkaPlugin\Calculator\Calculator;
 use Hubertinio\SyliusApaczkaPlugin\Calculator\PerApaczkaOrderRateCalculator;
 use Hubertinio\SyliusApaczkaPlugin\Cli\DevCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\LoadPointsCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\LoadServicesCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\PingCommand;
+use Hubertinio\SyliusApaczkaPlugin\Form\Type\ShippingConfigurationType;
+use Hubertinio\SyliusApaczkaPlugin\Repository\OrderPosRepository;
+use Hubertinio\SyliusApaczkaPlugin\Service\Configuration;
 use Hubertinio\SyliusApaczkaPlugin\Service\PushService;
 use Hubertinio\SyliusApaczkaPlugin\Service\SecurityService;
-use Sylius\Bundle\CoreBundle\Form\Type\Shipping\Calculator\ChannelBasedPerUnitRateConfigurationType;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 return static function (ContainerConfigurator $containerConfigurator): void {
@@ -25,14 +29,12 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->autowire()
         ->autoconfigure();
 
-    $services->load('Hubertinio\\SyliusApaczkaPlugin\\Controller\\', __DIR__ . '/../src/Controller');
+    $services->load('Hubertinio\\SyliusApaczkaPlugin\\Controller\\', __DIR__ . '/../../Controller');
 
-    /**
-     * @TODO dane z konfiguracji
-     */
+    $services->set($servicesIdPrefix . 'configuration', Configuration::class);
+
     $services->set($servicesIdPrefix . 'api.client', ApaczkaApiClient::class)
-        ->arg('$appId', '1352150_2c039ebd279355ec_63VFbdW')
-        ->arg('$appSecret', '5kbtajsttpzukslktbogasggjbqwi1c1');
+        ->factory([service($servicesIdPrefix . 'configuration'), 'clientFactory']);
 
     $services->set($servicesIdPrefix . 'api.cached_client', CachedApaczkaApiClient::class)
         ->args([
@@ -66,15 +68,25 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->tag('console.command')
         ->args([
             service($servicesIdPrefix . 'api.cached_client'),
-    ]);
+        ]);
 
     $services->set($servicesIdPrefix . 'address_shipping_calculator', PerApaczkaOrderRateCalculator::class)
-        ->tag($servicesIdPrefix . 'shipping_calculator', [
-        'calculator' => 'per_apaczka_order_rate',
-        'form_type' => ChannelBasedPerUnitRateConfigurationType::class,
-        'form-type' => ChannelBasedPerUnitRateConfigurationType::class,
-        'label' => 'sylius.form.shipping_calculator.per_unit_rate_configuration.label',
-    ]);
+        ->tag('sylius.shipping_calculator', [
+            'calculator' => Calculator::PER_ORDER_RATE,
+            'form_type' => ShippingConfigurationType::class,
+            'label' => 'sylius.form.shipping_calculator.' . Calculator::PER_ORDER_RATE . '_configuration.label',
+        ])
+    ;
+
+    $services->set($servicesIdPrefix . 'repository.pos', OrderPosRepository::class)
+        ->args([
+            param('kernel.project_dir'),
+            service('filesystem'),
+        ]);
+
+    $services
+        ->set($servicesIdPrefix . 'form.type.shipping', ShippingConfigurationType::class)
+        ->tag('sylius.form.type');
 
     /**
      * @TODO controller od push ogarnąć

@@ -1,6 +1,6 @@
 sylius_ui:
     events:
-        sylius.shop.checkout.select_payment.before_navigation:
+        sylius.shop.checkout.select_shipping.before_form:
             blocks:
                 scripts:
                     template: "@HubertinioSyliusApaczkaPlugin/_checkout.html.twig"

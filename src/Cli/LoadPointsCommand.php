@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class LoadPointsCommand extends Command
 {
-    protected   static $defaultName = 'sylius:shipping:apaczka:load-points';
+    protected static $defaultName = 'sylius:shipping:apaczka:load-points';
 
     protected static $defaultDescription = 'Load points by type';
 

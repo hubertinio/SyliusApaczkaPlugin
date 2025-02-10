@@ -15,10 +15,10 @@ class CachedApaczkaApiClient implements ApaczkaApiClientInterface
 {
     private const CACHE_TTL = 86400;
 
-        private const OMMIT_METHODS = [
+    private const OMMIT_METHODS = [
         'getSignature',
-                            'stringToSign'
-        ];
+        'stringToSign',
+    ];
 
     private static ApaczkaApiClientInterface $client;
 
