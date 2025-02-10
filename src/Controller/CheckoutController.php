@@ -7,6 +7,7 @@ namespace Hubertinio\SyliusApaczkaPlugin\Controller;
 use ECSPrefix202306\Symfony\Component\HttpKernel\Attribute\AsController;
 use Hubertinio\SyliusApaczkaPlugin\Repository\OrderPosRepository;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,10 +46,43 @@ final class CheckoutController extends AbstractController
             $this->logger->critical($e->getMessage());
 
             return JsonResponse::fromJsonString(
-                json_encode(['status' => $e->getMessage()]),
+                json_encode(['message' => $e->getMessage()]),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+    }
 
+    public function selectedPoint(CartContextInterface $cartContext): JsonResponse
+    {
+        try {
+            $order = $cartContext->getCart();
+
+            if (! $order) {
+                return new JsonResponse(['message' => 'No cart found']);
+            }
+
+            $pos = $this->posRepository->find((string) $order->getId());
+
+            if (! $pos) {
+                return new JsonResponse(['message' => 'No pos found']);
+            }
+
+            $output = [];
+            $output[] = $pos['brandPretty'] ?? $pos['operator'] ?? null;
+            $output[] = $pos['code'] ?? null;
+            $output[] = $pos['street'] ?? null;
+            $output[] = trim(($pos['postalCode'] ?? null) . ' ' . ($pos['city'] ?? null));
+
+            $output = array_filter($output);
+
+            return new JsonResponse(['pos' => implode('<br/>', $output)]);
+        } catch (Throwable $e) {
+            $this->logger->critical($e->getMessage());
+
+            return JsonResponse::fromJsonString(
+                json_encode(['message' => $e->getMessage()]),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
     }
 }

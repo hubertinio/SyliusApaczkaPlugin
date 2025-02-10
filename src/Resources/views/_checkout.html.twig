@@ -14,6 +14,31 @@
         const targetInput = form.querySelector('input[value="apaczka"]');
 
         if (targetInput) {
+            const description = targetInput
+                .closest('.item')
+                .querySelector('.description p');
+
+            if (description) {
+                fetch("{{ path('hubertinio_sylius_apaczka_checkout_selected_point') }}", {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.pos) {
+                        description.innerHTML = data.pos;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching shipping point:', error);
+                });
+            }
+
             const wrapper = document.createElement('div');
             wrapper.id = 'bp-wrapper';
             wrapper.style.display = 'none';
@@ -34,7 +59,7 @@
             // Składamy strukturę
             wrapper.appendChild(title);
             wrapper.appendChild(div);
-            form.after(wrapper); // Wstawiamy wrapper PO formularzu
+            form.after(wrapper);
 
             function toggleDiv() {
                 if (targetInput.checked) {
@@ -85,6 +110,8 @@
                     })
                     .then(result => {
                         console.log('Success:', result);
+
+                        window.location.reload();
                     })
                     .catch(error => {
                         console.error('Error:', error);
