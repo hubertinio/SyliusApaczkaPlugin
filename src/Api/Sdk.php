@@ -23,7 +23,8 @@ class Sdk {
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($ch, CURLOPT_VERBOSE, true);
+		curl_setopt($ch, CURLOPT_VERBOSE, false);
+        curl_setopt($ch, CURLOPT_HEADER, false); // Exclude headers from response
 
 		curl_setopt( $ch, CURLOPT_POSTFIELDS, http_build_query( self::buildRequest($route, $data) ) );
 

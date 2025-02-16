@@ -7,6 +7,7 @@ use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClientInterface;
 use Hubertinio\SyliusApaczkaPlugin\Api\CachedApaczkaApiClient;
 use Hubertinio\SyliusApaczkaPlugin\Calculator\Calculator;
 use Hubertinio\SyliusApaczkaPlugin\Calculator\PerApaczkaOrderRateCalculator;
+use Hubertinio\SyliusApaczkaPlugin\Cli\ApiCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\DevCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\LoadPointsCommand;
 use Hubertinio\SyliusApaczkaPlugin\Cli\LoadServicesCommand;
@@ -52,7 +53,6 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         ->tag('console.command')
         ->args([
         service($servicesIdPrefix . 'api.client'),
-        service($servicesIdPrefix . 'api.cached_client'),
     ]);
 
     $services->alias(ApaczkaApiClientInterface::class, $servicesIdPrefix . 'api.cached_client');

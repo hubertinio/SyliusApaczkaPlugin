@@ -18,8 +18,8 @@ class ApaczkaApiClient implements ApaczkaApiClientInterface
         "POCZTA",
     ];
 
-    public static ?string $appId = null;
-    public static ?string $appSecret = null;
+    private static ?string $appId = null;
+    private static ?string $appSecret = null;
 
     public function __construct(
         #[SensitiveParameter] ?string $appId = null,

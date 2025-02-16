@@ -6,6 +6,7 @@ namespace Hubertinio\SyliusApaczkaPlugin\Cli;
 
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClient;
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClientInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,24 +15,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @see https://panel.apaczka.pl/dokumentacja_api_v2.php#endpoints-points
+ *
+ * @example docker compose exec app sh -c "cd tests/Application; bin/console sylius:shipping:apaczka:load-points INPOST --app-id ... --app-secret ..."
  */
-final class LoadPointsCommand extends Command
+#[AsCommand(
+    name: 'sylius:shipping:apaczka:load-points',
+    description: 'Load points by type'
+)]
+final class LoadPointsCommand extends ApiCommand
 {
-    protected static $defaultName = 'sylius:shipping:apaczka:load-points';
-
-    protected static $defaultDescription = 'Load points by type';
-
-    private ApaczkaApiClientInterface $apiClient;
-
-    public function __construct(ApaczkaApiClientInterface $apiClient)
-    {
-        parent::__construct();
-
-        $this->apiClient = $apiClient;
-    }
-
     protected function configure(): void
     {
+        parent::configure();
+
         $this->addArgument(
             'type',
             InputArgument::REQUIRED,
@@ -41,6 +37,8 @@ final class LoadPointsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        parent::execute($input, $output);
+
         $data = $this->apiClient::points($input->getArgument('type'));
         $data = json_decode($data, true);
 

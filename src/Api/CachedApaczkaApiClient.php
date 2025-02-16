@@ -48,4 +48,14 @@ class CachedApaczkaApiClient implements ApaczkaApiClientInterface
                         return$output;
         });
         }
+
+    public static function setAppId(string $appId): void
+    {
+        self::$client->setAppId($appId);
+    }
+
+    public static function setAppSecret(string $appSecret): void
+    {
+        self::$client->setAppSecret($appSecret);
+    }
 }

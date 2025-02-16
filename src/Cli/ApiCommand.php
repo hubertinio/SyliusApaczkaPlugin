@@ -1,90 +1,48 @@
 <?php
 
-declare(strict_types=1);
+namespace Hubertinio\SyliusApaczkaPlugin\Cli;
 
-namespace Hubertinio\SyliusApaczkaPlugin\Calculator;
+use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClientInterface;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
-use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClient;
-use Hubertinio\SyliusApaczkaPlugin\Repository\OrderPosRepository;
-use Proxies\__CG__\Sylius\Component\Core\Model\Address;
-use Psr\Log\LoggerInterface;
-use Sylius\Component\Core\Exception\MissingChannelConfigurationException;
-use Sylius\Component\Core\Model\ShipmentInterface;
-use Sylius\Component\Registry\ServiceRegistryInterface;
-use Sylius\Component\Shipping\Calculator\CalculatorInterface;
-use Sylius\Component\Shipping\Model\ShipmentInterface as BaseShipmentInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Webmozart\Assert\Assert;
-
-final class PerApaczkaOrderRateCalculator implements CalculatorInterface
+abstract class ApiCommand extends Command
 {
-    public function __construct(
-        #[Autowire(service: 'hubertinio_sylius_apaczka_plugin.api.client')] private ApaczkaApiClient $apaczkaApiClient,
-        #[Autowire(service: 'hubertinio_sylius_apaczka_plugin.repository.pos')] private OrderPosRepository $posRepository,
-        #[Autowire(service: 'sylius.factory.address')] private \Sylius\Component\Core\Factory\AddressFactory $addressFactory,
-        #[Autowire(service: 'sylius.repository.address')] private object $addressRepository,
-        #[Autowire(service: 'sylius.repository.order')] private object $orderRepository,
-        private LoggerInterface $logger
-    ) {
+    protected ApaczkaApiClientInterface $apiClient;
+
+    public function __construct(ApaczkaApiClientInterface $apiClient)
+    {
+        parent::__construct();
+
+        $this->apiClient = $apiClient;
     }
 
-    public function calculate(BaseShipmentInterface $subject, array $configuration): int
+    protected function configure(): void
     {
-        Assert::isInstanceOf($subject, ShipmentInterface::class);
+        $this
+            ->addOption('app-id', 'i', InputOption::VALUE_REQUIRED, 'Application ID')
+            ->addOption('app-secret', 'k', InputOption::VALUE_REQUIRED, 'Secret key');
+    }
 
-        $orderId = $subject->getOrder()->getId();
-        $pos = $this->posRepository->find((string) $orderId);
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $appId = $input->getOption('app-id');
+        $secret = $input->getOption('app-secret');
 
-        if ($pos) {
-            /**
-             * @TODO api call
-             */
-            $this->apaczkaApiClient::$appId = $configuration['api_key'];
-            $this->apaczkaApiClient::$appSecret = $configuration['api_secret'];
-
-            /** @var Address $shippingAddress */
-            $order = $subject->getOrder();
-            $shippingAddress = $order->getShippingAddress();
-
-            if (
-                $subject->getMethod()?->getCode() === 'apaczka'
-                && $shippingAddress->getFirstName() !== $pos['operator']
-                && $shippingAddress->getLastName() !== $pos['code']
-            ) {
-                $newShippingAddress = new \Sylius\Component\Core\Model\Address();
-                $newShippingAddress->setFirstName($pos['operator']);
-                $newShippingAddress->setLastName($pos['code']);
-                $newShippingAddress->setProvinceName($pos['province']);
-                $newShippingAddress->setCity($pos['city']);
-                $newShippingAddress->setStreet($pos['street']);
-                $newShippingAddress->setPostcode($pos['postalCode']);
-                $newShippingAddress->setCountryCode('PL');
-                $newShippingAddress->setCustomer($shippingAddress->getCustomer());
-                $this->addressRepository->add($newShippingAddress);
-
-                $order->setShippingAddress($shippingAddress);
-                $this->orderRepository->add($order);
-            }
-
-            $speditorOrder = $this->getOrder();
-            $response = $this->apaczkaApiClient->order_valuation($speditorOrder);
-
-            return 123;
+        if (!$appId || !$secret) {
+            $output->writeln('<error>Both --app-id and --app-secret options are required.</error>');
+            return Command::FAILURE;
         }
 
+        $this->apiClient::setAppId($appId);
+        $this->apiClient::setAppSecret($secret);
 
-        /**
-         * @TODO api call
-         */
-        return 0;
+        return Command::SUCCESS;
     }
 
-    public function getType(): string
-    {
-        return Calculator::PER_ORDER_RATE;
-    }
-
-    private function getOrder(): array
+    protected function getOrder(): array
     {
         return $order = [
             'service_id'  => 41, // endpoint: service_structure
@@ -127,7 +85,7 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
                 'new' => [ // Powiadomienia o utworzeniu przesyłki
                     'isReceiverEmail' => 1, // 0 / 1
                     'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1  // 0 / 1
+                    'isSenderEmail'   => 0  // 0 / 1
                 ],
                 'sent' => [ // Powiadomienia o wysłaniu przesyłki
                     'isReceiverEmail' => 1, // 0 / 1
@@ -174,5 +132,4 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
             'content' => '',
         ];
     }
-
 }

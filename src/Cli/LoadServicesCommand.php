@@ -6,6 +6,7 @@ namespace Hubertinio\SyliusApaczkaPlugin\Cli;
 
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClient;
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClientInterface;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,24 +16,19 @@ use Symfony\Component\Console\Helper\Table;
 /**
  * @TODO opcja save dla zapisu do tabeli shipping_method
  * @TODO opcja filter na service_id
+ *
+ * @example docker compose exec app sh -c "cd tests/Application; bin/console sylius:shipping:apaczka:load-services --app-id ... --app-secret ..."
  */
-final class LoadServicesCommand extends Command
+#[AsCommand(
+    name: 'sylius:shipping:apaczka:load-services',
+    description: 'Load supported services'
+)]
+final class LoadServicesCommand extends ApiCommand
 {
-    protected   static $defaultName = 'sylius:shipping:apaczka:load-services';
-
-    protected static $defaultDescription = 'Load supported services';
-
-    private ApaczkaApiClientInterface $apiClient;
-
-    public function __construct(ApaczkaApiClientInterface $apiClient)
-    {
-        parent::__construct();
-
-        $this->apiClient = $apiClient;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        parent::execute($input, $output);
+
         $data = $this->apiClient::service_structure();
         $data = json_decode($data, true);
 
@@ -50,6 +46,6 @@ final class LoadServicesCommand extends Command
 
         $table->render();
 
-        return  Command::SUCCESS;
+        return Command::SUCCESS;
     }
 }
