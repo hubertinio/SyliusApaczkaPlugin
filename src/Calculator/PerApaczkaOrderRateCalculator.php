@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace Hubertinio\SyliusApaczkaPlugin\Calculator;
 
 use Hubertinio\SyliusApaczkaPlugin\Api\ApaczkaApiClient;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order as ApaczkaOrder;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order\Address as ApaczkaAddress;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order\Options as ApaczkaOptions;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order\Pickup as ApaczkaPickup;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order\Shipment as ApaczkaShipment;
+use Hubertinio\SyliusApaczkaPlugin\Model\Order\COD as ApaczkaCOD;
 use Hubertinio\SyliusApaczkaPlugin\Repository\OrderPosRepository;
-use Proxies\__CG__\Sylius\Component\Core\Model\Address;
+use Sylius\Component\Core\Model\Address;
 use Psr\Log\LoggerInterface;
-use Sylius\Component\Core\Exception\MissingChannelConfigurationException;
 use Sylius\Component\Core\Model\ShipmentInterface;
-use Sylius\Component\Registry\ServiceRegistryInterface;
 use Sylius\Component\Shipping\Calculator\CalculatorInterface;
 use Sylius\Component\Shipping\Model\ShipmentInterface as BaseShipmentInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -37,10 +41,11 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
 
         if ($pos) {
             /**
-             * @TODO api call
+             * @TODO dynamiczny serviceId
              */
-            $this->apaczkaApiClient::$appId = $configuration['api_key'];
-            $this->apaczkaApiClient::$appSecret = $configuration['api_secret'];
+            $serviceId = 41;
+            $this->apaczkaApiClient::setAppId($configuration['api_key']);
+            $this->apaczkaApiClient::setAppSecret($configuration['api_secret']);
 
             /** @var Address $shippingAddress */
             $order = $subject->getOrder();
@@ -66,10 +71,45 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
                 $this->orderRepository->add($order);
             }
 
-            $speditorOrder = $this->getOrder();
-            $response = $this->apaczkaApiClient->order_valuation($speditorOrder);
+            $aOrder = new ApaczkaOrder(
+                serviceId: $serviceId,
+                receiver: new ApaczkaAddress(
+                    countryCode: 'PL',
+                    name: 'Hubert Miazek',
+                    line1: 'Niciarniana 16 m. 50',
+                    postalCode: '92-334',
+                    city: 'Lodz',
+                    contactPerson: 'Hubert Miazek',
+                    email: 'b2b@hubertmiazek.com',
+                    phone: '513671443',
+                    foreignAddressId: 'LOD48N',
+                    isResidential: false
+                ),
+                options: new ApaczkaOptions,
+                shipmentValue: 9900,
+                cod: new ApaczkaCOD,
+                pickup: new ApaczkaPickup(),
+                shipment: [
+                    new ApaczkaShipment(
+                        lengthInCm: 10,
+                        widthInCm: 20,
+                        heightInCm: 30,
+                        weightInKg: 1,
+                    )
+                ],
+                comment: '',
+                content: ''
+            );
 
-            return 123;
+            $aOrderArray = $aOrder->toArray();
+            $data = $this->apaczkaApiClient->order_valuation($aOrderArray);
+
+            $data = json_decode($data, true);
+
+            /**
+             * @TODO calculate price from PLN
+             */
+            return $data["response"]["price_table"][$serviceId]["price_gross"] ?? 0;
         }
 
 
@@ -83,96 +123,4 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
     {
         return Calculator::PER_ORDER_RATE;
     }
-
-    private function getOrder(): array
-    {
-        return $order = [
-            'service_id'  => 41, // endpoint: service_structure
-            'address' => [
-                'sender' => [
-                    'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
-                    'name'               => 'Rocket Design Michał Nowak',
-                    'line1'              => 'Wierzbowa 33 m. 39',
-                    'line2'              => '',
-                    'postal_code'        => '90-245',
-                    'city'               => 'Lodz',
-                    'is_residential'     => 0,  // adres prywatny: 0 / 1
-                    'contact_person'     => 'Michał Nowak',
-                    'email'              => 'sylius@hubertmiazek.com',
-                    'phone'              => '600824141',
-                    'foreign_address_id' => 'LOD129M',
-                ],
-                'receiver' => [
-                    'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
-                    'name'               => 'Hubert Miazek',
-                    'line1'              => 'Niciarniana 16 m. 50',
-                    'line2'              => '',
-                    'postal_code'        => '92-334',
-                    'city'               => 'Lodz',
-                    'is_residential'     => 1,  // adres prywatny: 0 / 1
-                    'contact_person'     => 'Hubert Miazek',
-                    'email'              => 'b2b@hubertmiazek.com',
-                    'phone'              => '513671443',
-                    'foreign_address_id' => 'LOD48N'  // endpoint: points
-                ]
-            ],
-            'option'         => [
-                '31' => 0, // powiadomienie sms,
-                '11' => 0, // rod
-                '19' => 0, // dostawa w sobotę,
-                '25' => 0, // dostawa w godzinach,
-                '58' => 0, // ostrożnie
-            ],
-            'notification' => [
-                'new' => [ // Powiadomienia o utworzeniu przesyłki
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1  // 0 / 1
-                ],
-                'sent' => [ // Powiadomienia o wysłaniu przesyłki
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ],
-                'exception' => [ // Powiadomienia o wyjątku
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ],
-                'delivered' => [ // Powiadomienia o doręczeniu
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 0, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ]
-            ],
-            'shipment_value' => 9900,  // wartość w groszach
-            'cod'            => [
-                'amount'      => 0, // wartość w groszach
-                'bankaccount' => ''
-            ],
-            'pickup'         => [
-                'type'       => 'SELF', // endpoint: service_structure
-//                'date'       => date('Y-m-d', strtotime('tomorrow')),     // Y-m-d
-//                'hours_from' => '08:00',     // H:i - pickup_hours
-//                'hours_to'   => '16:00'      // H:i - pickup_hours
-            ],
-            'shipment' => [
-                [
-                    'dimension1' => 10, // długość (length) cm
-                    'dimension2' => 20, // szerokość (width) cm
-                    'dimension3'  => 30, // wysokość (height) cm
-                    'weight' => 1,  // kg
-                    'is_nstd' => 0,  // 0 / 1
-                    'shipment_type_code' => 'PACZKA', // endpoint: service_structure
-                ],
-            ],
-//            'comment' => 'TEST ' . date('Y-m-d H:i:s'),
-            'comment' => '',
-            'content' => '',
-        ];
-    }
-
 }

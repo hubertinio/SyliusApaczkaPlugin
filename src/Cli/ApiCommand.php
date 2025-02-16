@@ -47,19 +47,6 @@ abstract class ApiCommand extends Command
         return $order = [
             'service_id'  => 41, // endpoint: service_structure
             'address' => [
-//                'sender' => [
-//                    'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
-//                    'name'               => 'Rocket Design Michał Nowak',
-//                    'line1'              => 'Wierzbowa 33 m. 39',
-//                    'line2'              => '',
-//                    'postal_code'        => '90-245',
-//                    'city'               => 'Lodz',
-//                    'is_residential'     => 0,  // adres prywatny: 0 / 1
-//                    'contact_person'     => 'Michał Nowak',
-//                    'email'              => 'sylius@hubertmiazek.com',
-//                    'phone'              => '600824141',
-//                    'foreign_address_id' => 'LOD129M',
-//                ],
                 'receiver' => [
                     'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
                     'name'               => 'Hubert Miazek',
@@ -81,42 +68,13 @@ abstract class ApiCommand extends Command
                 '25' => 0, // dostawa w godzinach,
                 '58' => 0, // ostrożnie
             ],
-//            'notification' => [
-//                'new' => [ // Powiadomienia o utworzeniu przesyłki
-//                    'isReceiverEmail' => 0,
-//                    'isReceiverSms'   => 0,
-//                    'isSenderEmail'   => 0,
-//                    'isSenderSms'     => 0,
-//                ],
-//                'sent' => [ // Powiadomienia o wysłaniu przesyłki
-//                    'isReceiverEmail' => 0,
-//                    'isReceiverSms'   => 0,
-//                    'isSenderEmail'   => 0,
-//                    'isSenderSms'     => 0,
-//                ],
-//                'exception' => [ // Powiadomienia o wyjątku
-//                    'isReceiverEmail' => 0,
-//                    'isReceiverSms'   => 0,
-//                    'isSenderEmail'   => 0,
-//                    'isSenderSms'     => 0,
-//                ],
-//                'delivered' => [
-//                    'isReceiverEmail' => 0,
-//                    'isReceiverSms'   => 0,
-//                    'isSenderEmail'   => 0,
-//                    'isSenderSms'     => 0,
-//                ]
-//            ],
             'shipment_value' => 9900,  // wartość w groszach
             'cod'            => [
                 'amount'      => 0, // wartość w groszach
                 'bankaccount' => ''
             ],
-            'pickup'         => [
-                'type'       => 'SELF', // endpoint: service_structure
-//                'date'       => date('Y-m-d', strtotime('tomorrow')),     // Y-m-d
-//                'hours_from' => '08:00',     // H:i - pickup_hours
-//                'hours_to'   => '16:00'      // H:i - pickup_hours
+            'pickup' => [
+                'type' => 'SELF',
             ],
             'shipment' => [
                 [
