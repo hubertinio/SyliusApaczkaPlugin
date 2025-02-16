@@ -71,6 +71,9 @@ final class PerApaczkaOrderRateCalculator implements CalculatorInterface
                 $this->orderRepository->add($order);
             }
 
+            /**
+             * @TODO dynamiczne dane zamówienia
+             */
             $aOrder = new ApaczkaOrder(
                 serviceId: $serviceId,
                 receiver: new ApaczkaAddress(
