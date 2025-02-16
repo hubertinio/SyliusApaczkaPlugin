@@ -47,19 +47,19 @@ abstract class ApiCommand extends Command
         return $order = [
             'service_id'  => 41, // endpoint: service_structure
             'address' => [
-                'sender' => [
-                    'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
-                    'name'               => 'Rocket Design Michał Nowak',
-                    'line1'              => 'Wierzbowa 33 m. 39',
-                    'line2'              => '',
-                    'postal_code'        => '90-245',
-                    'city'               => 'Lodz',
-                    'is_residential'     => 0,  // adres prywatny: 0 / 1
-                    'contact_person'     => 'Michał Nowak',
-                    'email'              => 'sylius@hubertmiazek.com',
-                    'phone'              => '600824141',
-                    'foreign_address_id' => 'LOD129M',
-                ],
+//                'sender' => [
+//                    'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
+//                    'name'               => 'Rocket Design Michał Nowak',
+//                    'line1'              => 'Wierzbowa 33 m. 39',
+//                    'line2'              => '',
+//                    'postal_code'        => '90-245',
+//                    'city'               => 'Lodz',
+//                    'is_residential'     => 0,  // adres prywatny: 0 / 1
+//                    'contact_person'     => 'Michał Nowak',
+//                    'email'              => 'sylius@hubertmiazek.com',
+//                    'phone'              => '600824141',
+//                    'foreign_address_id' => 'LOD129M',
+//                ],
                 'receiver' => [
                     'country_code'       => 'PL', // Kod ISO 3166-1 alpha-2
                     'name'               => 'Hubert Miazek',
@@ -67,45 +67,46 @@ abstract class ApiCommand extends Command
                     'line2'              => '',
                     'postal_code'        => '92-334',
                     'city'               => 'Lodz',
-                    'is_residential'     => 1,  // adres prywatny: 0 / 1
+                    'is_residential'     => 0,  // adres prywatny: 0 / 1
                     'contact_person'     => 'Hubert Miazek',
                     'email'              => 'b2b@hubertmiazek.com',
                     'phone'              => '513671443',
                     'foreign_address_id' => 'LOD48N'  // endpoint: points
                 ]
             ],
-            'option'         => [
+            'options' => [
                 '31' => 0, // powiadomienie sms,
                 '11' => 0, // rod
                 '19' => 0, // dostawa w sobotę,
                 '25' => 0, // dostawa w godzinach,
                 '58' => 0, // ostrożnie
             ],
-            'notification' => [
-                'new' => [ // Powiadomienia o utworzeniu przesyłki
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 0  // 0 / 1
-                ],
-                'sent' => [ // Powiadomienia o wysłaniu przesyłki
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ],
-                'exception' => [ // Powiadomienia o wyjątku
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 1, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ],
-                'delivered' => [ // Powiadomienia o doręczeniu
-                    'isReceiverEmail' => 1, // 0 / 1
-                    'isReceiverSms'   => 0, // 0 / 1
-                    'isSenderEmail'   => 0, // 0 / 1
-                    'isSenderSms'     => 0, // 0 / 1
-                ]
-            ],
+//            'notification' => [
+//                'new' => [ // Powiadomienia o utworzeniu przesyłki
+//                    'isReceiverEmail' => 0,
+//                    'isReceiverSms'   => 0,
+//                    'isSenderEmail'   => 0,
+//                    'isSenderSms'     => 0,
+//                ],
+//                'sent' => [ // Powiadomienia o wysłaniu przesyłki
+//                    'isReceiverEmail' => 0,
+//                    'isReceiverSms'   => 0,
+//                    'isSenderEmail'   => 0,
+//                    'isSenderSms'     => 0,
+//                ],
+//                'exception' => [ // Powiadomienia o wyjątku
+//                    'isReceiverEmail' => 0,
+//                    'isReceiverSms'   => 0,
+//                    'isSenderEmail'   => 0,
+//                    'isSenderSms'     => 0,
+//                ],
+//                'delivered' => [
+//                    'isReceiverEmail' => 0,
+//                    'isReceiverSms'   => 0,
+//                    'isSenderEmail'   => 0,
+//                    'isSenderSms'     => 0,
+//                ]
+//            ],
             'shipment_value' => 9900,  // wartość w groszach
             'cod'            => [
                 'amount'      => 0, // wartość w groszach

@@ -23,9 +23,9 @@ final class DevCommand extends ApiCommand
         parent::execute($input, $output);
 
         $order = $this->getOrder();
-//        $this->getOrderValuation($output, $order);
+        $this->getOrderValuation($output, $order);
 //        $this->getOrderSend($output, $order);
-        $this->getOrders($output);
+//        $this->getOrders($output);
 
         return Command::SUCCESS;
     }
